@@ -1,31 +1,31 @@
 <template>
-  <div class="black-bg" v-if="isModalOpen == true">
-    <div class="white-bg">
-      <h4>상세페이지임</h4>
-      <p>상세페이지 내용임</p>
-      <button @click="ModalOpen(false);">닫기</button>
-    </div>
-  </div>
-  
-  <div class="menu">
+
+  <Transition name="fade">
+    <Modal @closeModal="ModalOpen(false)"
+           :products="products"
+           :choice="choice"
+           :isModalOpen="isModalOpen" />
+  </Transition>
+      <div class="menu">
     <a v-for="(menuName,i) in menu" :key='i'>{{menuName}}</a>
   </div>
 
-  <div v-for="(product,i) in products" :key='i'>
-    <h4>{{product.title}}</h4>
-    <!--<img class="room-img" src="./assets/"+{{image[i]}}+".png">-->
-    <img @click="ModalOpen(true);" class="room-img" :src=product.image>
-    <p>{{product.price}}원</p>
-    <p>좋아요 수 : {{heartCount[i]}}</p>
-    <button @click="heartAdd(i);">좋아요</button>
-  </div>
+  <Discount/>
+
+  <button>가격순 정렬 버튼</button>
+
+  <Card @openModal="ModalOpen(true, $event)" @heartAdd="heartAdd($event)" v-for="(product,i) in products" :key="product" :product="products[i]" :heartCount="heartCount[i]"/>
   <button v-on:click="heartShot();">하트뿅뿅</button>
   <span id="heart">{{heartSpan}}</span>
+
 </template>
 
 <script>
 
 import productData from './assets/product.js';
+import Discount from './Discount.vue';
+import Modal from './Modal.vue';
+import Card from "./Card.vue";
 
 export default {
   name: 'App',
@@ -33,9 +33,10 @@ export default {
     return {
       menu : ['Home', 'Products', 'About', 'Help'],
       products : productData,
-      heartCount : [0, 0, 0],
+      heartCount : [0, 0, 0, 0, 0, 0],
       heartSpan : "",
       isModalOpen : false,
+      choice : 0,
     }
   },
   methods : {
@@ -45,11 +46,16 @@ export default {
     heartShot() {
       this.heartSpan += "♥";
     },
-    ModalOpen(toggle) {
+    ModalOpen(toggle, index) {
+      console.log(toggle);
       this.isModalOpen = toggle;
+      this.choice = index;
     }
   },
   components: {
+    Card,
+    Modal,
+    Discount,
   }
 }
 </script>
@@ -78,9 +84,8 @@ export default {
   color : red;
 }
 
-.room-image {
-  width:100%;
-  margin-top : 40px;
+.room-img {
+  width:10%;
 }
 
 body {
@@ -99,4 +104,25 @@ div {
   border-radius: 8px;
   padding: 20px;
 }
+
+.fade-enter-from {
+  transform: translateX(-1000px);
+}
+.fade-enter-active {
+  transition: all 0.5s;
+}
+.fade-enter-to {
+  transform: translateX(0px);
+}
+
+.fade-leave-from {
+  opacity: 1;
+}
+.fade-leave-active {
+  transition: all 1s;
+}
+.fade-leave-to {
+  opacity: 0;
+}
+
 </style>
