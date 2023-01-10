@@ -29,5 +29,7 @@ export default {
 </script>
 
 <style scoped>
-
+.room-img {
+  width:10%;
+}
 </style>

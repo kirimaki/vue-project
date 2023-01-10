@@ -12,7 +12,11 @@
 
   <Discount/>
 
-  <button>가격순 정렬 버튼</button>
+  <button v-if="isUpsort === true" @click="priceSort('up'); isUpsort=false;">가격순 오름 정렬</button>
+  <button v-else @click="priceSort('down'); isUpsort=true;">가격순 내림 정렬</button>
+  <button v-if="isCharUpsort === true" @click="charSort('up'); isCharUpsort=false;">가나다 오름 정렬</button>
+  <button v-else @click="charSort('down'); isCharUpsort=true;">가나다 내림 정렬</button>
+
 
   <Card @openModal="ModalOpen(true, $event)" @heartAdd="heartAdd($event)" v-for="(product,i) in products" :key="product" :product="products[i]" :heartCount="heartCount[i]"/>
   <button v-on:click="heartShot();">하트뿅뿅</button>
@@ -37,6 +41,8 @@ export default {
       heartSpan : "",
       isModalOpen : false,
       choice : 0,
+      isUpsort : true,
+      isCharUpsort : true,
     }
   },
   methods : {
@@ -47,10 +53,19 @@ export default {
       this.heartSpan += "♥";
     },
     ModalOpen(toggle, index) {
-      console.log(toggle);
       this.isModalOpen = toggle;
       this.choice = index;
-    }
+    },
+    priceSort(type) {
+      this.products.sort(function(a, b) {
+        return (type === 'up' ? b.price - a.price : a.price - b.price)
+      })
+    },
+    charSort(type) {
+      this.products.sort(function(a, b) {
+        return (type === 'up' ? b.title.charCodeAt(0) - a.title.charCodeAt(0) : a.title.charCodeAt(0) - b.title.charCodeAt(0))
+      })
+    },
   },
   components: {
     Card,
@@ -84,25 +99,11 @@ export default {
   color : red;
 }
 
-.room-img {
-  width:10%;
-}
-
 body {
   margin: 0;
 }
 div {
   box-sizing: border-box;
-}
-.black-bg {
-  width: 100%; height: 100%;
-  background: rgb(0,0,0,0.5);
-  position: fixed; padding: 20px;
-}
-.white-bg {
-  width: 100%; background: white;
-  border-radius: 8px;
-  padding: 20px;
 }
 
 .fade-enter-from {
