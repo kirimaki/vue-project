@@ -10,12 +10,13 @@
     <a v-for="(menuName,i) in menu" :key='i'>{{menuName}}</a>
   </div>
 
-  <Discount/>
+  <Discount :value="rate" @transData="transData($event)" v-if="isShowDiscount === true"/>
 
   <button v-if="isUpsort === true" @click="priceSort('up'); isUpsort=false;">가격순 오름 정렬</button>
   <button v-else @click="priceSort('down'); isUpsort=true;">가격순 내림 정렬</button>
   <button v-if="isCharUpsort === true" @click="charSort('up'); isCharUpsort=false;">가나다 오름 정렬</button>
   <button v-else @click="charSort('down'); isCharUpsort=true;">가나다 내림 정렬</button>
+  <button @click="sortBack();">되돌리기</button>
 
 
   <Card @openModal="ModalOpen(true, $event)" @heartAdd="heartAdd($event)" v-for="(product,i) in products" :key="product" :product="products[i]" :heartCount="heartCount[i]"/>
@@ -35,6 +36,7 @@ export default {
   name: 'App',
   data() {
     return {
+      productsOrigin : [...productData],
       menu : ['Home', 'Products', 'About', 'Help'],
       products : productData,
       heartCount : [0, 0, 0, 0, 0, 0],
@@ -43,6 +45,8 @@ export default {
       choice : 0,
       isUpsort : true,
       isCharUpsort : true,
+      isShowDiscount : true,
+      rate : 0
     }
   },
   methods : {
@@ -63,9 +67,25 @@ export default {
     },
     charSort(type) {
       this.products.sort(function(a, b) {
+        console.log(b.title.charCodeAt(0));
         return (type === 'up' ? b.title.charCodeAt(0) - a.title.charCodeAt(0) : a.title.charCodeAt(0) - b.title.charCodeAt(0))
       })
     },
+    sortBack() {
+      return this.products = [...this.productsOrigin];
+    },
+    transData(value) {
+      this.rate = value;
+    }
+  },
+  mounted() {
+    const test = setInterval(() => {
+      if(this.rate > 0) {
+        this.rate--;
+      } else {
+        clearInterval(test);
+      }
+    }, 1000)
   },
   components: {
     Card,

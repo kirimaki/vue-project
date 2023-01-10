@@ -22,6 +22,12 @@ export default {
       pcs : 1,
     }
   },
+  beforeUpdate() {
+    if(this.pcs == 2) {
+      alert("2개는 안팜 ㅅㄱ");
+      this.pcs = 3;
+    }
+  },
   watch : {
     pcs(val) {
       //문자를 입력시 경고창 띄우기 + 초기값으로 되돌리기
